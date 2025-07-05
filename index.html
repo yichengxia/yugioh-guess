@@ -49,7 +49,7 @@
       display: flex;
       justify-content: center;
       gap: 12px;
-      margin: 16px 0;
+      margin: 0px 0;
     }
 
     /* Fancy input field */
@@ -82,15 +82,19 @@
     }
 
     /* Submit Guess button: primary color */
-    button:nth-of-type(1) {
+    .main-btn {
       background-color: #007bff;
       color: white;
+      padding: 6px 12px;
+      font-size: 14px;
+      border: none;
+      border-radius: 24px;
+      cursor: pointer;
+      transition: background-color 0.2s;
     }
 
-    button:nth-of-type(1):hover {
+    .main-btn:hover {
       background-color: #0056b3;
-      transform: translateY(-2px);
-      box-shadow: 0 6px 10px rgba(0,0,0,0.15);
     }
 
     /* New Game button: lighter style */
@@ -115,17 +119,17 @@
       ;
       gap: 6px;
       margin-top: 6px;
-      margin-left: 50px;
-      margin-right: 50px;
+      margin-left: 40px;
+      margin-right: 40px;
     }
 
     .field {
       display: flex;               /* make it a flex box */
       align-items: center;         /* vertical center */
-      padding: 6px 8px;
+      padding: 4px 6px;
       border-radius: 4px;
       border: 1px solid #ccc;
-      font-size: 14px;
+      font-size: 13px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -196,6 +200,45 @@
     .credits a:hover {
       text-decoration: underline;
     }
+
+    #hintToggleRow {
+      display: flex;
+      align-items: center;
+      justify-content: left;
+      gap: 16px;
+      margin-left: 40px;
+      font-size: 12px;
+      flex-wrap: wrap;
+    }
+
+    .hint-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .toggle-btn {
+      padding: 4px 8px;
+      font-size: 12px;
+      border: 1px solid #aaa;
+      border-radius: 10px;
+      background-color: #eee;
+      color: #333;
+      cursor: pointer;
+      transition: background-color 0.2s, color 0.2s;
+    }
+
+    .toggle-btn.active {
+      background-color: #28a745;   /* Light green */
+      color: #fff;
+      border-color: #28a745;
+    }
+
+    .hint-text {
+      font-size: 11px;
+      color: #333;
+      font-style: italic;
+    }
   </style>
 </head>
 <body>
@@ -206,8 +249,19 @@
   <div class="input-container">
     <p id="triesLeft">Enter the card name (you have 7 tries):</p>
     <input list="cardList" id="guessInput" placeholder="Enter card name">
-    <button onclick="submitGuess()">Submit Guess</button>
-    <button onclick="confirmNewGame()">New Game</button>
+    <button class="main-btn" onclick="submitGuess()">Submit Guess</button>
+    <button class="main-btn" onclick="confirmNewGame()">New Game</button>
+  </div>
+  
+  <div id="hintToggleRow">
+    <div class="hint-group">
+      <button id="initialHintBtn" class="toggle-btn"><strong>Hint:</strong> Name Initial</button>
+      <span id="initialHintDisplay" class="hint-text"></span>
+    </div>
+    <div class="hint-group">
+      <button id="wordHintBtn" class="toggle-btn"><strong>Hint:</strong> Word Count</button>
+      <span id="wordHintDisplay" class="hint-text"></span>
+    </div>
   </div>
 
   <datalist id="cardList"></datalist>
@@ -220,6 +274,8 @@
     let cards = [];
     let answer = null;
     let tries = 0;
+    let showInitialHint = false;
+    let showWordCountHint = false;
 
     const FIELD_NAMES = [
       "CardName", "id", "CardType", "Attribute", "Property", "Types",
@@ -299,6 +355,18 @@
         if (!e.target.closest(".zoom-wrapper")) {
           this.classList.add("hidden");
         }
+      });
+
+      document.getElementById("initialHintBtn").addEventListener("click", () => {
+        showInitialHint = !showInitialHint;
+        document.getElementById("initialHintBtn").classList.toggle("active", showInitialHint);
+        updateHintDisplay();
+      });
+
+      document.getElementById("wordHintBtn").addEventListener("click", () => {
+        showWordCountHint = !showWordCountHint;
+        document.getElementById("wordHintBtn").classList.toggle("active", showWordCountHint);
+        updateHintDisplay();
       });
 
       console.log("Answer Card:", answer);
@@ -478,8 +546,28 @@
       createTableHeader();     // Add back header row
       updateTriesLeft();       // Reset tries counter
       document.getElementById("guessInput").value = "";  // Clear input
+      updateHintDisplay();  // Reset hint contents
 
       console.log("New Answer:", answer);  // Debug log
+    }
+
+    function updateHintDisplay() {
+      const initialHintSpan = document.getElementById("initialHintDisplay");
+      const wordHintSpan = document.getElementById("wordHintDisplay");
+
+      if (!answer) {
+        initialHintSpan.textContent = "";
+        wordHintSpan.textContent = "";
+        return;
+      }
+
+      initialHintSpan.innerHTML = showInitialHint
+        ? `<strong>${answer.CardName.charAt(0)}</strong>`
+        : "";
+
+      wordHintSpan.innerHTML = showWordCountHint
+        ? `<strong>${answer.CardName.trim().split(/\s+/).length}</strong>`
+        : "";
     }
 
     loadCards();
