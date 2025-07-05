@@ -123,6 +123,12 @@
       margin-right: 40px;
     }
 
+    .correct-row {
+      border: 2px solid #28a745; /* green border */
+      border-radius: 6px;
+      padding: 1px;
+    }
+
     .field {
       display: flex;               /* make it a flex box */
       align-items: center;         /* vertical center */
@@ -431,6 +437,10 @@
     function displayResult(guess) {
       const row = document.createElement('div');
       row.className = 'result-row';
+
+      if (isCorrect(guess)) {
+        row.classList.add("correct-row");
+      }
 
       DISPLAY_FIELDS.forEach(field => {
         const span = document.createElement('span');
