@@ -15,6 +15,10 @@ Inspired by [pokemonle](https://github.com/QuantAskk/pokemonle) and Wordle.
 
 ## Demo
 
+### Automatic Suggestions
 ![Demo 1](demo/demo1.png)
+### Itemized Feedback and Hints
 ![Demo 2](demo/demo2.png)
 ![Demo 3](demo/demo3.png)
+### Card Image Zoom
+![Demo 4](demo/demo4.png)

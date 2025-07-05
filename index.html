@@ -315,6 +315,8 @@
           // Replace HTML-escaped apostrophes
           if (typeof card[key] === 'string') {
             cleanedCard[key] = card[key].replace(/&#039;/g, "'").trim();
+            // Replace HTML-escaped quotes
+            cleanedCard[key] = cleanedCard[key].replace(/&quot;/g, '"');
           } else {
             cleanedCard[key] = card[key];
           }
@@ -474,7 +476,7 @@
           wrapper.appendChild(nameSpan);
           span.appendChild(wrapper);
         } else {
-          // Normalize value
+          // Preprocess display value
           if (["Attribute", "Property", "Types"].includes(field) && displayValue === "NULL") {
             displayValue = "-";
           }
@@ -483,7 +485,72 @@
             displayValue = "-";
           }
 
-          span.textContent = displayValue ?? "-";
+          // Create icon + text container
+          const fieldContent = document.createElement('span');
+          fieldContent.style.display = 'flex';
+          fieldContent.style.alignItems = 'center';
+          fieldContent.style.gap = '4px';
+
+          // Add icon for Attribute
+          if (field === "Attribute" && displayValue !== "-") {
+            const attrIcon = document.createElement('img');
+            attrIcon.src = `icons/attribute/attribute_icon_${displayValue.toLowerCase()}.png`;
+            attrIcon.alt = displayValue;
+            attrIcon.style.width = '16px';
+            attrIcon.style.height = '16px';
+            fieldContent.appendChild(attrIcon);
+          }
+
+          // Add icon for Property (if not Normal or NULL)
+          if (field === "Property" && displayValue !== "-" && displayValue.toLowerCase() !== "normal") {
+            const propIcon = document.createElement('img');
+            propIcon.src = `icons/effect/effect_icon_${displayValue.toLowerCase().replace(/-/g, "")}.png`;  // also remove "-"
+            propIcon.alt = displayValue;
+            propIcon.style.width = '16px';
+            propIcon.style.height = '16px';
+            fieldContent.appendChild(propIcon);
+          }
+
+          if (field === "Types") {
+
+            if (!displayValue || displayValue === "-" || displayValue.trim() === "") {
+              // Show a plain "-" if NULL or empty
+              const textNode = document.createTextNode("-");
+              fieldContent.appendChild(textNode);
+              span.appendChild(fieldContent);
+            } else {
+              const guessTypes = (guess[field] || "").split("/").map(s => s.trim());
+              const answerTypes = (answer[field] || "").split("/").map(s => s.trim());
+
+              guessTypes.forEach((type, idx) => {
+                if (idx > 0) fieldContent.appendChild(document.createTextNode("/"));
+
+                const typeSpan = document.createElement("span");
+                typeSpan.textContent = type;
+
+                if (answerTypes.includes(type)) {
+                  typeSpan.style.color = "#28a745"; // green
+                  // typeSpan.style.fontWeight = "bold";
+                }
+
+                fieldContent.appendChild(typeSpan);
+                span.appendChild(fieldContent);
+              });
+            }
+          } else {
+            const textNode = document.createTextNode(displayValue ?? "-");
+          
+            fieldContent.appendChild(textNode);
+            span.appendChild(fieldContent);
+          }
+
+          // Field-level correctness coloring
+          if (FIELDS_TO_CHECK.includes(field)) {
+            const isCorrect = guess[field] === answer[field];
+            span.classList.add(isCorrect ? 'correct' : 'incorrect');
+          }
+
+          row.appendChild(span);
         }
 
         // Check correctness
