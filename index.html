@@ -268,6 +268,10 @@
       <button id="wordHintBtn" class="toggle-btn"><strong>Hint:</strong> Word Count</button>
       <span id="wordHintDisplay" class="hint-text"></span>
     </div>
+    <div class="hint-group">
+      <button id="appearanceHintBtn" class="toggle-btn"><strong>Hint:</strong> First Appearance</button>
+      <span id="appearanceHintDisplay" class="hint-text"></span>
+    </div>
   </div>
 
   <datalist id="cardList"></datalist>
@@ -278,10 +282,12 @@
   <script>
     const MAX_TRIES = 7;
     let cards = [];
+    let packData = [];
     let answer = null;
     let tries = 0;
     let showInitialHint = false;
     let showWordCountHint = false;
+    let showAppearanceHint = false;
 
     const FIELD_NAMES = [
       "CardName", "id", "CardType", "Attribute", "Property", "Types",
@@ -303,6 +309,7 @@
     async function loadCards() {
       const res = await fetch('cards.csv');
       const csvText = await res.text();
+      await loadPackData();
 
       const parsed = Papa.parse(csvText, {
         header: true,
@@ -377,7 +384,27 @@
         updateHintDisplay();
       });
 
+      document.getElementById("appearanceHintBtn").addEventListener("click", () => {
+        showAppearanceHint = !showAppearanceHint;
+        document.getElementById("appearanceHintBtn").classList.toggle("active", showAppearanceHint);
+        // Update the appearance hint display
+        updateAppearanceHint();
+        updateHintDisplay();
+      });
+
       console.log("Answer Card:", answer);
+    }
+
+    async function loadPackData() {
+      const res = await fetch('pack.csv');
+      const csvText = await res.text();
+
+      const parsed = Papa.parse(csvText, {
+        header: true,
+        skipEmptyLines: true
+      });
+
+      packData = parsed.data;
     }
 
     function populateDatalist(data) {
@@ -624,6 +651,7 @@
       updateTriesLeft();       // Reset tries counter
       document.getElementById("guessInput").value = "";  // Clear input
       updateHintDisplay();  // Reset hint contents
+      updateAppearanceHint();  // Reset appearance hint
 
       console.log("New Answer:", answer);  // Debug log
     }
@@ -645,6 +673,21 @@
       wordHintSpan.innerHTML = showWordCountHint
         ? `<strong>${answer.CardName.trim().split(/\s+/).length}</strong>`
         : "";
+    }
+
+    function getFirstAppearanceDate(cardId) {
+      const match = packData.find(p => p.id === cardId);
+      return match ? match.date : "Unknown";
+    }
+
+    function updateAppearanceHint() {
+      const hintSpan = document.getElementById("appearanceHintDisplay");
+      if (showAppearanceHint && answer) {
+        const date = getFirstAppearanceDate(answer.id);
+        hintSpan.innerHTML = date !== "Unknown" ? `<strong>${date}</strong>` : "<strong>Unknown</strong>";
+      } else {
+        hintSpan.textContent = "";
+      }
     }
 
     loadCards();
