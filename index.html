@@ -637,9 +637,11 @@
     }
 
     function confirmNewGame() {
-      if (confirm("Are you sure you want to start a new game?")) {
+      // Don't confirm for now, just start a new game
+      // Uncomment the next line to enable confirmation dialog
+      // if (confirm("Are you sure you want to start a new game?")) {
         startNewGame();
-      }
+      // }
     }
 
     function startNewGame() {
