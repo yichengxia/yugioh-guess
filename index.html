@@ -443,6 +443,10 @@
       const guessName = input.value.trim();
       const guessedCard = cards.find(c => c.CardName.toLowerCase() === guessName.toLowerCase());
 
+      // If guessName is empty, do nothing
+      if (guessName.length === 0) {
+        return;
+      }
       if (!guessedCard) {
         alert("Card not found!");
         return;
