@@ -324,6 +324,8 @@
             cleanedCard[key] = card[key].replace(/&#039;/g, "'").trim();
             // Replace HTML-escaped quotes
             cleanedCard[key] = cleanedCard[key].replace(/&quot;/g, '"');
+            // Replace HTML-escaped ampersands
+            cleanedCard[key] = cleanedCard[key].replace(/&amp;/g, '&');
           } else {
             cleanedCard[key] = card[key];
           }
