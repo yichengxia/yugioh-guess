@@ -677,7 +677,14 @@
 
     function getFirstAppearanceDate(cardId) {
       const match = packData.find(p => p.id === cardId);
-      return match ? match.date : "Unknown";
+      // const pack_id 
+      // return match ? match.date : "Unknown";
+      if (match) {
+        const date = match.date;
+        const pack = match.pack_id.split("-");
+        return date + (pack.length > 1 ? ` [${pack[0]}]` : "");
+      }
+      return "Unknown";
     }
 
     function updateAppearanceHint() {
@@ -703,7 +710,7 @@
   <footer class="credits">
     © 2025 
     Designed by <a href="https://github.com/yichengxia/yugioh-guess">YC</a> | 
-    Resources from <a href="https://github.com/Wildric-Auric/YuGiOh-Database">YuGiOh-Database</a> | 
+    Resources from <a href="https://github.com/Wildric-Auric/YuGiOh-Database">YuGiOh-Database</a> & MyCard | 
     Inspired by <a href="https://github.com/QuantAskk/pokemonle">pokemonle</a> & Wordle
   </footer>
 </body>
