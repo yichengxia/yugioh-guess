@@ -289,6 +289,8 @@
     let showInitialHint = false;
     let showWordCountHint = false;
     let showAppearanceHint = false;
+    let selectedCardsMode = true; // If true, only select answers from selected cards
+    let selectedCardNames = []; // Array to hold selected card names
 
     const FIELD_NAMES = [
       "CardName", "id", "CardType", "Attribute", "Property", "Types",
@@ -310,6 +312,7 @@
     async function loadCards() {
       const res = await fetch('cards.csv');
       const csvText = await res.text();
+      await loadSelectedCardNames();
       await loadPackData();
 
       const parsed = Papa.parse(csvText, {
@@ -334,7 +337,12 @@
         return cleanedCard;
       });
 
-      answer = cards[Math.floor(Math.random() * cards.length)];
+      if (selectedCardsMode && selectedCardNames.length > 0) {
+        const filteredCards = cards.filter(card => selectedCardNames.includes(card.CardName));
+        answer = filteredCards[Math.floor(Math.random() * filteredCards.length)];
+      } else {
+        answer = cards[Math.floor(Math.random() * cards.length)];
+      }
       populateDatalist(cards);
       createTableHeader();
       document.getElementById("guessInput").addEventListener("input", function (e) {
@@ -398,6 +406,13 @@
       console.log("Answer Card:", answer);
     }
 
+    async function loadSelectedCardNames() {
+      const res = await fetch('20ser.csv');
+      const csvText = await res.text();
+      const lines = csvText.trim().split("\n");
+      selectedCardNames = lines.map(line => line.trim()).filter(Boolean);
+    }
+    
     async function loadPackData() {
       const res = await fetch('pack.csv');
       const csvText = await res.text();
@@ -653,7 +668,12 @@
 
     function startNewGame() {
       tries = 0;
-      answer = cards[Math.floor(Math.random() * cards.length)];
+      if (selectedCardsMode && selectedCardNames.length > 0) {
+        const filteredCards = cards.filter(card => selectedCardNames.includes(card.CardName));
+        answer = filteredCards[Math.floor(Math.random() * filteredCards.length)];
+      } else {
+        answer = cards[Math.floor(Math.random() * cards.length)];
+      }
 
       // Clear results
       const results = document.getElementById('results');
