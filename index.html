@@ -310,7 +310,7 @@
 
     // Load and parse CSV
     async function loadCards() {
-      const res = await fetch('cards.csv');
+      const res = await fetch('data/cards.csv');
       const csvText = await res.text();
       await loadSelectedCardNames();
       await loadPackData();
@@ -407,14 +407,14 @@
     }
 
     async function loadSelectedCardNames() {
-      const res = await fetch('20ser.csv');
+      const res = await fetch('data/20ser.csv');
       const csvText = await res.text();
       const lines = csvText.trim().split("\n");
       selectedCardNames = lines.map(line => line.trim()).filter(Boolean);
     }
     
     async function loadPackData() {
-      const res = await fetch('pack.csv');
+      const res = await fetch('data/pack.csv');
       const csvText = await res.text();
 
       const parsed = Papa.parse(csvText, {
