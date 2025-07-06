@@ -407,7 +407,7 @@
     }
 
     async function loadSelectedCardNames() {
-      const res = await fetch('data/20ser.csv');
+      const res = await fetch('data/25ser.csv');
       const csvText = await res.text();
       const lines = csvText.trim().split("\n");
       selectedCardNames = lines.map(line => line.trim()).filter(Boolean);
