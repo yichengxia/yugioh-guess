@@ -460,6 +460,9 @@
         // If incorrect, display the answer
         if (!isCorrect(guessedCard)) {
           displayResult(answer);
+        } else {
+          // If correct, disable further guesses
+          tries = MAX_TRIES;  // Set tries to max to prevent further guesses
         }
       }
 
