@@ -8,6 +8,17 @@ let showWordCountHint = false;
 let showAppearanceHint = false;
 let selectedCardsMode = true; // If true, only select answers from selected cards
 let selectedCardNames = []; // Array to hold selected card names
+// Special cards mapping for those without a password
+// These cards have a special ID of 0, so we need to handle them differently
+const specialCards = {
+  "Obelisk the Tormentor": "10000000",
+  "The Winged Dragon of Ra": "10000010",
+  "Slifer the Sky Dragon": "10000020",
+  "Magi Magi ☆ Magician Gal": "10000030",
+  "Holactie the Creator of Light": "10000040",
+  "The Winged Dragon of Ra - Sphere Mode": "10000080",
+  "The Winged Dragon of Ra - Immortal Phoenix": "10000090",
+};
 
 const FIELD_NAMES = [
   "CardName", "id", "CardType", "Attribute", "Property", "Types",
@@ -228,10 +239,13 @@ function displayResult(guess) {
 
       const image = document.createElement("img");
       const id = guess.id?.toString().replace(/^0+/, '');
-      image.src = `card-images/${id}.png`;
-      image.onerror = () => {
+      if (id.length === 0 && specialCards[guess.CardName]) {
+        image.src = `card-images/${specialCards[guess.CardName]}.png`;
+      } else if (id && id.length > 0) { // If ID is not empty, try to load the image
+        image.src = `card-images/${id}.png`;
+      } else { // Otherwise, use a default image
         image.src = 'card-images/Back-EN.png';
-      };
+      }
       image.className = "card-thumbnail";
       image.alt = guess[field];
       image.dataset.full = image.src;
