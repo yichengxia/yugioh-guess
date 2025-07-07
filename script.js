@@ -18,6 +18,16 @@ const specialCards = {
   "Holactie the Creator of Light": "10000040",
   "The Winged Dragon of Ra - Sphere Mode": "10000080",
   "The Winged Dragon of Ra - Immortal Phoenix": "10000090",
+  "Ulevo": "501000000",
+  "Meteo the Matchless": "501000001",
+  "King of Destruction - Xexex": "501000002",
+  "Queen of Fate - Eternia": "501000003",
+  "Testament of the Arcane Lords": "501000004",
+  "Armament of the Lethal Lords": "501000005",
+  "Chimaera, the Master of Beasts": "501000006",
+  "Emperor of Lightning": "501000007",
+  "Tyr, the Vanquishing Warlord": "501000008",
+  "Lorelei, the Symphonic Arsenal": "501000009",
 };
 
 const FIELD_NAMES = [
