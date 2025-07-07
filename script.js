@@ -253,6 +253,8 @@ function displayResult(guess) {
         image.src = `card-images/${specialCards[guess.CardName]}.png`;
       } else if (id && id.length > 0) { // If ID is not empty, try to load the image
         image.src = `card-images/${id}.png`;
+      } else {
+        image.src = 'card-images/Back-EN.png';
       }
       // If there is an error, use the default back image
       image.onerror = () => {
